@@ -41,6 +41,9 @@ jobs:
         id: short-sha
         run: echo "sha=$(echo -n ${{ github.sha }} | cut -c1-5)" >> $GITHUB_OUTPUT
 
+      - name: Echo the tag
+        run: echo "Image tag is ${{ secrets.OCI_REGISTRY }}/${{ secrets.REPO_NAME }}:${{ steps.short-sha.outputs.sha }}"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
