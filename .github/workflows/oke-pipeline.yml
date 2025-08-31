@@ -46,7 +46,7 @@ jobs:
         with:
           context: ./app
           push: true
-          tags: ocir.ap-singapore-1.oci.oraclecloud.com/axh7nxvqrat7/${{ secrets.REPO_NAME }}:${{ steps.short-sha.outputs.sha }}
+          tags: ${{ secrets.OCI_REGISTRY }}/${{ secrets.OCI_TENANCY_NAMESPACE }}/${{ secrets.REPO_NAME }}:${{ steps.short-sha.outputs.sha }}
 
   deploy:
     name: Deploy to OKE
@@ -85,5 +85,5 @@ jobs:
           helm upgrade --install my-app ./helm \
             --namespace default \
             --create-namespace \
-            --set image.repository=ocir.ap-singapore-1.oci.oraclecloud.com/axh7nxvqrat7/${{ secrets.REPO_NAME }} \
+            --set image.repository=${{ secrets.OCI_REGISTRY }}/${{ secrets.OCI_TENANCY_NAMESPACE }}/${{ secrets.REPO_NAME }} \
             --set image.tag=${{ needs.build.outputs.sha }}
