@@ -12,6 +12,8 @@ jobs:
   build:
     name: Build and Push to OCR
     runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.short-sha.outputs.sha }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -35,12 +37,16 @@ jobs:
           username: ${{ secrets.OCI_REGISTRY_USER }}
           password: ${{ secrets.OCI_REGISTRY_AUTH }}
 
+      - name: Generate short SHA
+        id: short-sha
+        run: echo "sha=$(echo ${{ github.sha }} | cut -c1-5)" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: ./app
           push: true
-          tags: ${{ secrets.OCI_REGISTRY }}/${{ secrets.REPO_NAME }}:${{ github.sha }}
+          tags: ${{ secrets.OCI_REGISTRY }}/${{ secrets.REPO_NAME }}:${{ steps.short-sha.outputs.sha }}
 
   deploy:
     name: Deploy to OKE
@@ -80,4 +86,4 @@ jobs:
             --namespace default \
             --create-namespace \
             --set image.repository=${{ secrets.OCI_REGISTRY }}/${{ secrets.REPO_NAME }} \
-            --set image.tag=${{ github.sha }}
+            --set image.tag=${{ needs.build.outputs.sha }}
