@@ -18,8 +18,8 @@ jobs:
 
       - name: Debug DNS
         run: |
-            nslookup sgp.ocir.io
-            ping -c 3 sgp.ocir.io || true
+            nslookup sin.ocir.io
+            ping -c 3 sin.ocir.io || true
 
       - name: Fix DNS resolver
         run: |
