@@ -16,6 +16,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Debug DNS
+        run: |
+            nslookup sgp.ocir.io
+            ping -c 3 sgp.ocir.io || true
+
       - name: Fix DNS resolver
         run: |
             sudo bash -c 'echo "nameserver 8.8.8.8" > /etc/resolv.conf'
