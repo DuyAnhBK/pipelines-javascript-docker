@@ -72,8 +72,17 @@ jobs:
 
       - name: Set up kubectl
         run: |
-          oci ce cluster create-kubeconfig --cluster-id ${{ secrets.OCI_CLUSTER_OCID }} --region ${{ secrets.OCI_REGION }} --file $HOME/.kube/config --token-version 2.0.0 --kube-endpoint PUBLIC_ENDPOINT
-          kubectl config use-context ${{ secrets.OCI_CLUSTER_CONTEXT }}
+          oci ce cluster create-kubeconfig \
+            --cluster-id ${{ secrets.OCI_CLUSTER_OCID }} \
+            --region ${{ secrets.OCI_REGION }} \
+            --file $HOME/.kube/config \
+            --token-version 2.0.0 \
+            --kube-endpoint PUBLIC_ENDPOINT
+          # Fix file permissions
+          chmod 600 ~/.oci/config
+          chmod 600 ~/.oci/oci_api_key.pem
+          # Print current context
+          kubectl config current-context
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
